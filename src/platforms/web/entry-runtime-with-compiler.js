@@ -22,9 +22,12 @@ Vue.prototype.$mount = function(el,hydrating){
         }
 
         //存在template 进行编译
+        console.log(template,'template')
         if(template){
             //通过编译得到render
-            let render = ()=>{ console.log('编译方法得到的render') }
+            let render = (h)=>{ 
+                return h('div',[h('li','1'),h('li','2'),h('test-comp')])
+             }
             options.render = render
         }
     }

@@ -5,7 +5,11 @@ import { initProxy } from "./proxy"
 export function initMixin(Vue) {
     Vue.prototype._init = function(options) {
         const vm = this
-        vm.$options = options
+        vm.$options = mergeOptions(
+            resolveConstructorOptions(vm.constructor),
+            options||{},
+            vm
+        )
         vm._self = this
 
         initProxy(vm) //挂载_renderProxy

@@ -1,6 +1,9 @@
-import { isPrimitive, isTrue } from '../util/index'
+import { isDef, isPrimitive, isTrue, resolveAsset } from '../util/index'
 import { normalizeChildren } from './helper/index'
 import VNode from './vnode'
+import config from '../config'
+import { createComponent } from './create-component'
+
 
 export function createElement(
     context, 
@@ -37,16 +40,32 @@ export function _createElement( context,
 
     let vnode
     if(normalizationType === ALWAYS_NORMALZIE){
+        //如果children不是数组，给他搞成数组，
+        //如果是数组，可能是树结构，递归处理children
         children = normalizeChildren(children)
-
     }else if(normalizationType === SIMPLE_NORMALIZE){
 
     }
 
     if(typeof tag === 'string') {
-        //todo
-
-        vnode = new VNode(tag,data,children,undefined,undefined,context)
+        let Ctor 
+        //判断tag是不是一个保留标签，即html的原生标签
+        if(config.isReservedTag(tag)){
+            vnode = new VNode(
+                config.parsePlatformTagName(tag),
+                data,
+                children,
+                undefined,
+                undefined,
+                context
+            )
+        }else if(!data && isDef(Ctor = resolveAsset(context.$options,'components',tag)) ){
+            //如果没有data，而且是自定义组件
+             vnode = createComponent(Ctor, data, context, children, tag)
+            console.log('自定义组件')
+        }else {
+            vnode = new VNode(tag,data,children,undefined,undefined,context)
+        }
     }
 
     return vnode

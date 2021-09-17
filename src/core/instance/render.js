@@ -10,7 +10,6 @@ export function renderMixin(Vue){
         const vm = this 
         const { render  } = vm.$options
         let vnode = render.call(vm._renderPoxy,vm.$createElement )
-        console.log(vnode,'vnode')
         return vnode
     }
 }

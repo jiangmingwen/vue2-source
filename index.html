@@ -8,11 +8,19 @@
     <script src="./dist/vue.js"></script>
 </head>
 <body>
-    <div class="container" id="app">aaa</div>
+    <div class="container" id="app">
+        <test-comp></test-comp>
+    </div>
     <script>
         const app = new Vue({
             el: '#app',
-            render: (h) => h('ul',{},[h('li','html'),h('li',{},'css'),h('li','javascript')] ) ,
+            // render: (h) => h('ul',{},[h('li','html'),h('li',{},'css'),h('li','javascript')] ) ,
+            components: {
+                'test-comp': {
+                    template: '<h1>我是一个child组件</h1>'
+                }
+            },
+            template: '<h1>我是一个child组件</h1>',
             data:{
                 name: 'jay'
             }
