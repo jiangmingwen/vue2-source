@@ -1,10 +1,23 @@
 import Watcher from "../observer/watcher"
 import { noop } from "../util/index"
 
+export let activeInstance = null 
+
+export function setActiveInstance(vm){
+    const prevActiveInstance = activeInstance
+    activeInstance = vm
+    return () => {
+        activeInstance = prevActiveInstance
+    }
+}
+
+
 export function lifecycleMixin (Vue){
     Vue.prototype._update = function (vnode,hydrating){
         const vm = this
         const prevEl = vm.$el
+
+        const restoreActiveInstance = setActiveInstance(vm)
 
         //上一次的虚拟dom
         const prevVnode = vm._vnode
@@ -16,6 +29,9 @@ export function lifecycleMixin (Vue){
             //更新
             vm.$el = vm.__patch__(prevVnode,vnode)
         }
+        //做完patch以后，恢复当前的vue实例
+        restoreActiveInstance()
+
         vm._vnode = vnode
     }
 }

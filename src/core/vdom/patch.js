@@ -1,4 +1,5 @@
 import { isDef, isPrimitive, isUndef } from "../util/index"
+
 import VNode from './vnode'
 export function createPatchFunction(backend){
     const { nodeOps,modules } = backend
@@ -25,6 +26,9 @@ export function createPatchFunction(backend){
         ownerArray,
         index
     ){
+        if(createComponent(vnode,insertedVnodeQueue,parentElm,refElm)){
+            return
+        }
         const {data,children,tag} = vnode
         if(isDef(tag)){
             //存在标签
@@ -37,10 +41,10 @@ export function createPatchFunction(backend){
         }
     }
 
-    function createChildren(vnode,children){
+    function createChildren(vnode,children,insertedVnodeQueue){
         if(Array.isArray(children)){
             for(let i =0;i<children.length;i++) {
-                createElm(children[i],null,vnode.elm)
+                createElm(children[i],insertedVnodeQueue,vnode.elm)
             }
         }else if(isPrimitive(vnode.text)) {
             nodeOps.appendChild(vnode.elm, nodeOps.createTextNode(String(vnode.text)) )
@@ -50,6 +54,8 @@ export function createPatchFunction(backend){
     
     return  function patch(oldVnode,vnode,hydrating,removeOnly){
         console.log('vdom patch:',oldVnode,vnode,hydrating,removeOnly)
+        const insertedVnodeQueue = []
+
         if(isUndef(oldVnode)){
 
         }else {
@@ -61,9 +67,26 @@ export function createPatchFunction(backend){
             // replacing existing element
             const oldElm = oldVnode.elm
             const parentElm = nodeOps.parentNode(oldElm)
-            createElm(vnode,null,parentElm)
+
+            createElm(vnode,insertedVnodeQueue,parentElm,nodeOps.nextSibling(oldElm))
         }
     }
 }
 
 
+function createComponent(vnode,insertedVnodeQueue,parentElm,refElm){
+    let i  = vnode.data
+    if(isDef(i)) {
+        const isReactivate = isDef(vnode.componentInstance) && i.keepAlive
+        if(isDef(i = i.hook) && isDef(i = i.init) ){
+            console.log('patch.js:  i(vnode,false)')
+            i(vnode,false)
+        }
+        
+        if(isDef(vnode.componentInstance)){
+            console.log(vnode,insertedVnodeQueue,parentElm,refElm,'vnode,insertedVnodeQueue,parentElm,refElm')
+            console.log('patch.js: componentInstance',vnode.componentInstance);
+            return 
+        }
+    }
+}

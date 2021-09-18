@@ -54,3 +54,7 @@ const camelizeRE = /-(\w)/g
 export const camelize = cached((str) => {
   return str.replace(camelizeRE, (_, c) => c ? c.toUpperCase() : '')
 })
+
+export function isObject (obj) {
+    return obj !== null && typeof obj === 'object'
+}

@@ -37,7 +37,6 @@ export function _createElement( context,
     children,
     normalizationType
 ){
-
     let vnode
     if(normalizationType === ALWAYS_NORMALZIE){
         //如果children不是数组，给他搞成数组，
@@ -62,11 +61,9 @@ export function _createElement( context,
         }else if(!data && isDef(Ctor = resolveAsset(context.$options,'components',tag)) ){
             //如果没有data，而且是自定义组件
              vnode = createComponent(Ctor, data, context, children, tag)
-            console.log('自定义组件')
         }else {
             vnode = new VNode(tag,data,children,undefined,undefined,context)
         }
     }
-
     return vnode
 }
